@@ -28,14 +28,12 @@ Base.show(io::IO, ib::PartialCellBottom) = print(io, summary(ib))
 
 """
     PartialCellBottom(bottom, minimum_height)
-
 Return an immersed boundary...
 """
 PartialCellBottom(bottom_height; minimum_fractional_Δz=0.1) =
     PartialCellBottom(bottom_height, minimum_fractional_Δz)
 
 """
-
         --x--
           ∘   k+1
     k+1 --x--    ↑      <- node z
@@ -43,13 +41,12 @@ PartialCellBottom(bottom_height; minimum_fractional_Δz=0.1) =
       k --x--    ↓
       
 Criterion is h >= z - ϵ Δz
-
 """
 @inline function immersed_cell(i, j, k, underlying_grid, ib::PartialCellBottom)
     # Face node above current cell
-    x, y, z = node(c, c, f, i, j, k+1, underlying_grid)
+    z = znode(c, c, f, i, j, k+1, underlying_grid)
     h = @inbounds ib.bottom_height[i, j]
-    return h >= z
+    return z <= h
 end
 
 const PCIBG = ImmersedBoundaryGrid{<:Any, <:Any, <:Any, <:Any, <:Any, <:PartialCellBottom}
